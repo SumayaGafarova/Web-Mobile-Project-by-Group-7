@@ -1,6 +1,8 @@
 div {
     display: inline-block;
-    color: rgb(106, 0, 255)
+    color: rgb(106, 0, 255);
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
 }
 
 table {
