@@ -3,82 +3,157 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Group 07 Project</title>
-    <link rel="stylesheet" href="/style.css" />
+    <title>Profile Manager</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <!-- Finally, we start! -->
-    <!-- The structure of our extenstion: 
-       1. Navbar (Base Profile, 2-3 additional profiles for some fields of jobs, Download from LinkedIn)
-       2. Welcome, {Name}!
-       3. Form to add info manually (Name, Surname, Education, Experience, Skills,Certificates)
-       4. ????? tables, iframe and so on (to be continued...)
-       5. Automatic Cover Letter Generation
-      -->
-    <div>
-      <table
-        bgcolor="gray"
-        cellpadding="10"
-        cellspacing="0"
-        border="1"
-        width="600"
-        height="380"
-      >
-        <tr bgcolor="blue">
-          <td colspan="3" align="left" valign="top">A</td>
-          <td align="center" valign="bottom">B</td>
-          <td align="right" valign="top">
-            <h2 style="color: orange" align="center">Who We Are</h2>
-            <p style="color: orange" align="center">
-              We are a passionate team committed to excellence
-            </p>
-          </td>
-        </tr>
+    <div class="container">
+      <!-- <h1>Profile Manager</h1> -->
 
-        <tr style="color: blue" bgcolor="red">
-          <td align="center" valign="bottom">1a</td>
-          <td align="center" valign="top">1b</td>
-          <td align="center" valign="bottom">1c</td>
-        </tr>
+      <!-- Base Profile Section -->
+      <div id="baseProfileSection">
+        <h1>Base Profile</h1>
+        <form id="baseProfileForm">
+          <label for="baseName">Name:</label>
+          <input type="text" id="baseName" placeholder="Enter Name" />
 
+          <label for="baseSurname">Surname:</label>
+          <input type="text" id="baseSurname" placeholder="Enter Surname" />
+          <br />
+          <br />
+          <label for="baseGender">Gender:</label>
+          <select id="baseGender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
 
-        <tr style="color: rebeccapurple" bgcolor="red">
-          <td align="right" valign="bottom">1a</td>
-          <td align="center" valign="top">1b</td>
-          <td align="center" valign="top">1c</td>
-        </tr>
+          <label for="baseAge">Age:</label>
+          <input type="number" id="baseAge" placeholder="Enter Age" />
 
-        <tr style="color: green" bgcolor="red">
-          <td align="right" valign="bottom">1a</td>
-          <td align="center" valign="top">1b</td>
-          <td align="left" valign="bottom">1c</td>
-        </tr>
+          <label for="baseBirthDate">Birth Date:</label>
+          <input type="date" id="baseBirthDate" />
+          <br />
+          <br />
+          <label for="baseEducation">Education:</label>
+          <input type="text" id="baseEducation" placeholder="Enter Education" />
 
-        
+          <label for="baseExperience">Experience:</label>
+          <input
+            type="text"
+            id="baseExperience"
+            placeholder="Enter Experience"
+          />
+          <br />
+          <br />
+          <label for="baseSkills">Skills:</label>
+          <input type="text" id="baseSkills" placeholder="Enter Skills" />
 
-        <tr style="color: orange" bgcolor="green">
-          <td valign="bottom">2a</td>
-          <td align="center" valign="top">2b</td>
-          <td align="top" valign="bottom">2c</td>
-        </tr>
+          <label for="baseCertificates">Certificates (Upload Files):</label>
+          <input type="file" id="baseCertificates" multiple />
 
-        <tr style="color: orange" bgcolor="green">
-          <td valign="bottom">2a</td>
-          <td align="center" valign="top">2b</td>
-          <td align="top" valign="bottom">2c</td>
-        </tr>
+          <button type="submit">Save Base Profile</button>
+        </form>
+      </div>
 
-        <tr style="color: orange" bgcolor="green">
-          <td valign="bottom">2a</td>
-          <td align="center" valign="top">2b</td>
-          <td align="top" valign="bottom">2c</td>
-        </tr>
-      </table>
+      <!-- Add Profile Section -->
+      <div class="input-section">
+        <h2>Create Profiles</h2>
+        <input
+          type="text"
+          id="profileNameInput"
+          placeholder="Enter Profile Name"
+        />
+        <button id="addProfileButton">Add Profile</button>
+      </div>
+
+      <!-- Profiles List -->
+      <div id="profilesContainer">
+        <h1>Profiles</h1>
+        <div id="profileButtons"></div>
+      </div>
     </div>
-    <button></button>
-    <label for="checking"></label>
-    <input type="checkbox" name="checking" id="checking" />
-    <span> </span>
-    <script src="./app.js"></script>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <h2 id="modalTitle">Profile Form</h2>
+        <form id="profileForm">
+          <label for="profileName">Name:</label>
+          <input type="text" id="profileName" />
+
+          <label for="profileSurname">Surname:</label>
+          <input type="text" id="profileSurname" />
+          <br />
+          <br />
+
+          <label for="profileGender">Gender:</label>
+          <select id="profileGender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <label for="profileAge">Age:</label>
+          <input type="number" id="profileAge" />
+
+          <label for="profileBirthDate">Birth Date:</label>
+          <input type="date" id="profileBirthDate" />
+          <br />
+          <br />
+
+          <label for="profileEducation">Education:</label>
+          <input type="text" id="profileEducation" />
+
+          <label for="profileExperience">Experience:</label>
+          <input type="text" id="profileExperience" />
+          <br />
+          <br />
+
+          <label for="profileSkills">Skills:</label>
+          <input type="text" id="profileSkills" />
+
+          <label for="profileCertificates">Certificates:</label>
+          <input type="file" id="profileCertificatesInput" multiple />
+
+          <button type="submit">Save</button>
+        </form>
+
+        <!--  ------------------------------------ -->
+
+        <div id="educationContainer">
+          <label for="baseEducation">Education:</label>
+          <input
+            type="text"
+            id="baseEducation"
+            class="education-input"
+            placeholder="Enter Education"
+          />
+        </div>
+
+        <div id="experienceContainer">
+          <label for="baseExperience">Experience:</label>
+          <input
+            type="text"
+            id="baseExperience"
+            class="experience-input"
+            placeholder="Enter Experience"
+          />
+        </div>
+
+        <div id="skillsContainer">
+          <label for="baseSkills">Skills:</label>
+          <input
+            type="text"
+            id="baseSkills"
+            class="skills-input"
+            placeholder="Enter Skills"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
   </body>
 </html>
