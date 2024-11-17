@@ -1,3 +1,31 @@
+* {
+  margin: 0;
+}
+
+.header {
+  color: #007bff;
+  font: 700 1.5em Arial, Helvetica, sans-serif;
+  border: 0px solid #007bff;
+  text-align: center;
+  padding: 30px;
+  background-image: url(sources/footer.jpg);
+  object-fit: cover;
+}
+
+.container {
+  width: 40%;
+  border: 0px solid #33333356;
+  padding: 20px;
+  box-shadow: 0px 0px 5px #333;
+  float: right;
+  background-color: #007bff;
+}
+
+h2 {
+  color: #fff;
+  font: 700 1.3em Arial, Helvetica, sans-serif;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -39,23 +67,33 @@ form {
 }
 
 form label {
+  color: #fff;
   margin: 10px 0 5px;
+  font: 400 1em Arial, Helvetica, sans-serif;
 }
 
 form input,
-form textarea {
+form textarea, 
+form fieldset {
   padding: 10px;
-  font-size: 16px;
+  font: 400 1em Arial, Helvetica, sans-serif;
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 15px;
 }
 
-form button {
-  background-color: #007bff;
+form fieldset {
   color: #fff;
+}
+
+form button {
+  display: inline;
+  background-color: #ffffff;
+  color: #333;
   border: none;
   padding: 10px;
+  margin: 5px;
+  width: 20%;
   font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
