@@ -15,10 +15,10 @@
 .container {
   width: 40%;
   border: 0px solid #33333356;
+  border-radius: 30px;
   padding: 20px;
   margin: 30px 10px;
   box-shadow: 0px 0px 5px #333;
-  float: right;
   background-color: #007bff;
 }
 
@@ -74,6 +74,8 @@ form label {
   font: 400 1em Arial, Helvetica, sans-serif;
 }
 
+#profileNameInput,
+#profilesContainer,
 form input,
 form textarea, 
 form fieldset,
@@ -92,13 +94,12 @@ form fieldset {
 }
 
 form button {
-  display: inline;
+  display: inline-block;
   background-color: #ffffff;
   color: #333;
   border: none;
   padding: 10px;
   margin: 5px;
-  width: 50%;
   font-size: 16px;
   border-radius: 4px;
   cursor: pointer;

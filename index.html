@@ -8,9 +8,26 @@
   </head>
   <body>
     <div class="header">
-      <h1>Welcome to Our Page</h1>
+      <h1>Welcome to Profile Manager</h1>
     </div>
     <div class="container">
+      <!-- Add Profile Section -->
+      <div class="input-section">
+        <h2>Create Profiles</h2>
+        <input
+          type="text"
+          id="profileNameInput"
+          placeholder="Enter Profile Name"
+        />
+        <button id="addProfileButton">Add Profile</button>
+      </div>
+
+      <!-- Profiles List -->
+      <div id="profilesContainer">
+        <h2>Profiles</h2>
+        <div id="profileButtons"></div>
+      </div>
+      <hr />
       <!-- <h1>Profile Manager</h1> -->
       <h2>Base Profile</h2>
       <!-- Base Profile Section -->
@@ -55,26 +72,12 @@
           <label for="baseCertificates">Certificates (Upload Files):</label>
           <input type="file" id="baseCertificates" multiple />
 
-          <button type="submit">Save Base Profile</button>
-          <button type="reset">Reset</button>
+          <div id="button-container">
+            <button type="submit">Save Base Profile</button>
+            <button type="reset">Reset</button>
+          </div>
+          
         </form>
-      </div>
-
-      <!-- Add Profile Section -->
-      <div class="input-section">
-        <h2>Create Profiles</h2>
-        <input
-          type="text"
-          id="profileNameInput"
-          placeholder="Enter Profile Name"
-        />
-        <button id="addProfileButton">Add Profile</button>
-      </div>
-
-      <!-- Profiles List -->
-      <div id="profilesContainer">
-        <h2>Profiles</h2>
-        <div id="profileButtons"></div>
       </div>
     </div>
 
@@ -158,6 +161,6 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
