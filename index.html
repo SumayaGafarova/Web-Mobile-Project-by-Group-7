@@ -34,17 +34,23 @@
           <label for="baseBirthDate">Birth Date:</label>
           <input type="date" id="baseBirthDate" />
           <label for="baseEducation">Education:</label>
-          <input type="text" id="baseEducation" placeholder="Enter Education" />
+          <select id="baseEducation">
+            <option>Primary school only</option>
+            <option>Some high school, no diploma</option>
+            <option>High school diploma</option>
+            <option>Vocational school</option>
+            <option>University degree</option>
+            <option>Some graduate-level courses</option>
+            <option>Master's degree</option>
+            <option>Some doctoral-level courses</option>
+            <option>Doctorate</option>
+          </select> 
 
           <label for="baseExperience">Experience:</label>
-          <input
-            type="text"
-            id="baseExperience"
-            placeholder="Enter Experience"
-          />
+          <textarea id="baseExperience" placeholder="Enter Experience" rows="5"></textarea>
     
           <label for="baseSkills">Skills:</label>
-          <input type="text" id="baseSkills" placeholder="Enter Skills" />
+          <textarea id="baseSkills" placeholder="Enter Skills" rows="5"></textarea>
 
           <label for="baseCertificates">Certificates (Upload Files):</label>
           <input type="file" id="baseCertificates" multiple />
