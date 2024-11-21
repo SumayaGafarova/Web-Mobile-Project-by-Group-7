@@ -7,7 +7,7 @@
 .header {
   color: dodgerblue;
   font: 700 1.5em Arial, Helvetica, sans-serif;
-  border: 0px solid #007bff;
+  border: 1px solid #007bff;
   text-align: center;
   padding: 30px;
   background-image: url(sources/footer.jpg);
