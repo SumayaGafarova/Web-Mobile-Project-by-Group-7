@@ -31,12 +31,23 @@ fieldForm.addEventListener('submit', (e) => {
   const fieldValue = document.getElementById('field-value').value.trim();
 
   if (fieldName && fieldValue) {
-    fields.push({ name: fieldName, value: fieldValue });
+    // Check for existing field
+    const existingFieldIndex = fields.findIndex((field) => field.name === fieldName);
+    if (existingFieldIndex !== -1) {
+      // Update existing field
+      fields[existingFieldIndex].value = fieldValue;
+    } else {
+      // Add new field
+      fields.push({ name: fieldName, value: fieldValue });
+    }
+
+    // Save to localStorage and re-render
     localStorage.setItem('customFields', JSON.stringify(fields));
     renderFields();
     fieldForm.reset();
   }
 });
+
 
 // Remove a field
 const removeField = (index) => {
@@ -64,9 +75,16 @@ document.getElementById('extract-data').addEventListener('click', async () => {
         } else {
           const data = result[0].result;
           if (data) {
-            // Save extracted data
+            // Update or add extracted data to fields
             Object.keys(data).forEach((key) => {
-              fields.push({ name: key, value: data[key] });
+              const existingFieldIndex = fields.findIndex((field) => field.name === key);
+              if (existingFieldIndex !== -1) {
+                // Update existing field
+                fields[existingFieldIndex].value = data[key];
+              } else {
+                // Add new field
+                fields.push({ name: key, value: data[key] });
+              }
             });
             localStorage.setItem('customFields', JSON.stringify(fields));
             renderFields();
@@ -90,12 +108,9 @@ function extractLinkedInData() {
   if (nameElement) profileData['Full Name'] = nameElement.innerText;
 
   // Extract headline
-  const headlineElement = document.querySelector('.text-body-medium');
-  if (headlineElement) profileData['Headline'] = headlineElement.innerText;
-
-  // Extract current position
-  const positionElement = document.querySelector('.pv-text-details__right-panel > div:nth-child(1) span:nth-child(1)');
-  if (positionElement) profileData['Current Position'] = positionElement.innerText;
+  let positionElement = document.querySelector('.text-body-medium');
+  if (!positionElement) positionElement = document.querySelector(".body-small.text-color-text")
+  if (positionElement) profileData['Position'] = positionElement.innerText;
 
   // Extract location
   const locationElement = document.querySelector('.text-body-small.inline.t-black--light.break-words');
