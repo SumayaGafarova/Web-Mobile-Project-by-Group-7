@@ -489,6 +489,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ---- HISTORY RESTORING
+
+  // Helper to download a file
+  const downloadFile = (filename, content) => {
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Export Data
+  document.getElementById('export-data').addEventListener('click', () => {
+    chrome.storage.local.get(null, (data) => {
+      const jsonData = JSON.stringify(data, null, 2); // Format JSON
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-'); // Remove unsupported filename characters
+      downloadFile(`extension-data-${timestamp}.json`, jsonData);
+    });
+  });
+
+  // Import Data
+  document.getElementById('import-data').addEventListener('click', () => {
+    const importFileInput = document.getElementById('import-file');
+    importFileInput.click(); // Trigger hidden file input
+  });
+
+  document.getElementById('import-file').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+
+        // Merge imported data into chrome.storage.local
+        chrome.storage.local.set(importedData, () => {
+          alert('Data imported successfully!');
+          location.reload(); // Reload to reflect the imported data
+        });
+      } catch (error) {
+        alert('Invalid JSON file!');
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // Send Data via Email
+  document.getElementById('send-email').addEventListener('click', () => {
+    chrome.storage.local.get(null, (data) => {
+      const jsonData = JSON.stringify(data, null, 2); // Format JSON
+      const emailBody = encodeURIComponent(`Here is the exported data:\n\n${jsonData}`);
+      const subject = encodeURIComponent('Exported Extension Data');
+      const mailtoLink = `mailto:?subject=${subject}&body=${emailBody}`;
+
+      window.open(mailtoLink, '_blank'); // Open default email client
+    });
+  });
+
+  // HISTORY RESTORING END
+
   // Initialize
   updateProfileSelector();
   renderFields();
