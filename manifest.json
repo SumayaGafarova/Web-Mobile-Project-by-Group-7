@@ -9,11 +9,25 @@
   ],
   "permissions": [
     "storage",
+    "scripting",
     "activeTab",
-    "scripting"
+    "tabs"
   ],
   "action": {
     "default_popup": "index.html",
     "default_icon": "sources/footer.jpg"
-  }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
 }

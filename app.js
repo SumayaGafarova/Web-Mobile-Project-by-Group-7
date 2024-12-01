@@ -1,27 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Profile management
   const profileSelector = document.getElementById('profile-selector');
-  let profiles = JSON.parse(localStorage.getItem('profiles')) || {};
-  let activeProfile = localStorage.getItem('activeProfile') || 'Default';
-  let jobApplications = JSON.parse(localStorage.getItem('jobApplications')) || [];
+  let profiles = {};
+  let activeProfile = 'Default';
+  let jobApplications = [];
 
   // Helper function to ensure profile initialization
-  const initializeProfile = (profileName) => {
-    if (!profiles[profileName]) {
-      profiles[profileName] = { fields: [], mappings: {} };
-      localStorage.setItem('profiles', JSON.stringify(profiles));
-    }
+  const initializeProfile = (profileName, callback) => {
+    chrome.storage.local.get(['profiles'], (result) => {
+      profiles = result.profiles || {};
+      if (!profiles[profileName]) {
+        profiles[profileName] = { fields: [], mappings: {} };
+        chrome.storage.local.set({ profiles }, callback);
+      } else if (callback) {
+        callback();
+      }
+    });
   };
 
   // Initialize active profile
-  initializeProfile(activeProfile);
+  chrome.storage.local.get(['activeProfile'], (result) => {
+    activeProfile = result.activeProfile || 'Default';
+    initializeProfile(activeProfile, () => {
+      chrome.storage.local.get(['profiles'], (result) => {
+        profiles = result.profiles || {};
+        ({ fields, mappings } = profiles[activeProfile]);
+        renderFields();
+        renderMappings();
+        populateLinkedInFields();
+        updateProfileSelector();
+      });
+    });
+  });
 
   // Get references to DOM elements
   const fieldsList = document.getElementById('fields-list');
   const fieldForm = document.getElementById('field-form');
   const mappingForm = document.getElementById('mapping-form');
   const mappingList = document.getElementById('mapping-list');
-  let { fields = [], mappings = {} } = profiles[activeProfile]; // Destructure active profile
+  let fields = [];
+  let mappings = {};
 
   // Render fields
   const renderFields = () => {
@@ -63,62 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  const renderJobDashboard = () => {
-    const jobTableBody = document.querySelector('#job-table tbody');
-    jobTableBody.innerHTML = ''; // Clear existing rows
-
-    jobApplications.forEach((application, index) => {
-      const row = document.createElement('tr');
-
-      row.innerHTML = `
-        <td>${application.company}</td>
-        <td>${application.title}</td>
-        <td>${application.date}</td>
-        <td>${application.status}</td>
-        <td>
-          <button class="remove-job" data-index="${index}">Remove</button>
-          <button class="edit-job" data-index="${index}">Edit</button>
-        </td>
-      `;
-
-      jobTableBody.appendChild(row);
-    });
-
-    // Add event listeners for Remove and Edit buttons
-    document.querySelectorAll('.remove-job').forEach((button) => {
-      button.addEventListener('click', (e) => {
-        const index = e.target.dataset.index;
-        removeJobApplication(index);
-      });
-    });
-
-    document.querySelectorAll('.edit-job').forEach((button) => {
-      button.addEventListener('click', (e) => {
-        const index = e.target.dataset.index;
-        editJobApplication(index);
-      });
-    });
-  };
-
-  const editJobApplication = (index) => {
-    const application = jobApplications[index];
-
-    // Populate form with existing values
-    document.getElementById('company-name').value = application.company;
-    document.getElementById('job-title').value = application.title;
-    document.getElementById('application-date').value = application.date;
-    document.getElementById('application-status').value = application.status;
-
-    // Remove the old entry
-    removeJobApplication(index);
-  };
-
-
-
   // Save fields and mappings to the active profile
   const saveFields = () => {
     profiles[activeProfile] = { fields, mappings };
-    localStorage.setItem('profiles', JSON.stringify(profiles));
+    chrome.storage.local.set({ profiles });
   };
 
   // Add a new field
@@ -169,38 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('job-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const company = document.getElementById('company-name').value.trim();
-    const title = document.getElementById('job-title').value.trim();
-    const date = document.getElementById('application-date').value;
-    const status = document.getElementById('application-status').value;
-
-    if (company && title && date && status) {
-      jobApplications.push({ company, title, date, status });
-      localStorage.setItem('jobApplications', JSON.stringify(jobApplications));
-      renderJobDashboard();
-      e.target.reset(); // Reset form fields
-    } else {
-      alert('Please fill in all fields.');
-    }
-  });
-
-  const removeJobApplication = (index) => {
-    jobApplications.splice(index, 1);
-    localStorage.setItem('jobApplications', JSON.stringify(jobApplications));
-    renderJobDashboard();
-  };
-
-
-  // Remove a mapping
-  window.removeMapping = (linkedInField) => {
-    delete mappings[linkedInField];
-    saveFields();
-    renderMappings();
-  };
-
   // Populate the profile selector dropdown
   const updateProfileSelector = () => {
     profileSelector.innerHTML = '';
@@ -218,21 +152,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Switch active profile
   profileSelector.addEventListener('change', (e) => {
     activeProfile = e.target.value;
-    localStorage.setItem('activeProfile', activeProfile);
-    initializeProfile(activeProfile);
-
-    ({ fields, mappings } = profiles[activeProfile]); // Update fields and mappings
-    renderFields();
-    renderMappings();
-    populateLinkedInFields();
+    chrome.storage.local.set({ activeProfile });
+    initializeProfile(activeProfile, () => {
+      chrome.storage.local.get(['profiles'], (result) => {
+        profiles = result.profiles || {};
+        ({ fields, mappings } = profiles[activeProfile]);
+        renderFields();
+        renderMappings();
+        populateLinkedInFields();
+      });
+    });
   });
 
   // Create a new profile
   document.getElementById('create-profile').addEventListener('click', () => {
     const newProfileName = prompt('Enter a name for the new profile:').trim();
     if (newProfileName && !profiles[newProfileName]) {
-      initializeProfile(newProfileName);
-      updateProfileSelector();
+      initializeProfile(newProfileName, updateProfileSelector);
       alert(`Profile "${newProfileName}" created successfully.`);
     } else if (profiles[newProfileName]) {
       alert(`Profile "${newProfileName}" already exists.`);
@@ -250,8 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm(`Are you sure you want to delete the profile "${activeProfile}"?`)) {
       delete profiles[activeProfile];
       activeProfile = Object.keys(profiles)[0];
-      localStorage.setItem('profiles', JSON.stringify(profiles));
-      localStorage.setItem('activeProfile', activeProfile);
+      chrome.storage.local.set({ profiles, activeProfile });
       ({ fields, mappings } = profiles[activeProfile]);
       updateProfileSelector();
       renderFields();
@@ -318,10 +253,29 @@ document.addEventListener('DOMContentLoaded', () => {
     return profileData;
   }
 
+
+  // Autofill forms
+  document.getElementById('autofill-forms').addEventListener('click', () => {
+    chrome.storage.local.get(['profiles', 'activeProfile'], (result) => {
+      const profiles = result.profiles || {};
+      const activeProfile = result.activeProfile || 'Default';
+
+      if (!profiles[activeProfile]) {
+        alert('No active profile found.');
+        return;
+      }
+
+      chrome.runtime.sendMessage({
+        action: 'autofillForms',
+        profileData: profiles[activeProfile],
+      });
+    });
+  });
+
+
   // Initialize
+  updateProfileSelector();
   renderFields();
   renderMappings();
   populateLinkedInFields();
-  updateProfileSelector();
-  renderJobDashboard();
 });
