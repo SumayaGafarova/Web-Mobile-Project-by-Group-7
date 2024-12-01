@@ -552,6 +552,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // HISTORY RESTORING END
 
+  document.getElementById("create-coverletter").addEventListener("click", () => {
+    chrome.storage.local.get(["activeProfile", "profiles"], (res) => {
+      const activeProfile = res.activeProfile;
+      const profiles = res.profiles || {};
+      const currentFields = profiles[activeProfile]?.fields || [];
+
+      if (!currentFields.length) {
+        alert("No data available in the active profile to generate a cover letter.");
+        return;
+      }
+
+      const payload = {
+        contents: [
+          {
+            parts: [
+              {
+                text: `Create me a cover letter with this data: ${JSON.stringify(currentFields)}`
+              }
+            ]
+          }
+        ]
+      };
+
+      sendJsonToGoogleAI(payload)
+        .then((response) => {
+          const responseText = response.candidates[0].content.parts[0].text;
+          document.getElementById("cover-letter-text").innerHTML = responseText;
+
+          // Update the profile with the generated cover letter
+          const updatedFields = [...currentFields, { key: "coverLetter", value: responseText }];
+          profiles[activeProfile].fields = updatedFields;
+
+          chrome.storage.local.set({ profiles }, () => {
+            alert("Cover letter stored successfully!");
+          });
+        })
+        .catch((error) => console.error("API Call Failed:", error));
+    });
+  });
+
   // Initialize
   updateProfileSelector();
   renderFields();
@@ -561,3 +601,33 @@ document.addEventListener('DOMContentLoaded', () => {
   renderJobDashboard();
   renderSavedForms();
 });
+
+
+// Function to send a JSON request to the Google AI API
+async function sendJsonToGoogleAI(requestBody) {
+  const apiKey = "AIzaSyBj6WAklQXo_eDY1YiaKuKbao6nl6bL9fg"; // API key for authentication
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
+  try {
+    // Make a POST request to the API with the provided request body
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    // Check if the response status is not OK
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+    }
+
+    // Parse and return the JSON response
+    return await response.json();
+  } catch (error) {
+    // Log any errors encountered during the request
+    console.error('Failed to send JSON to Google AI API:', error);
+    throw error;
+  }
+}

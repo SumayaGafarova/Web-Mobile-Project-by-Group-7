@@ -65,65 +65,76 @@
         <button id="extract-data">Extract from LinkedIn</button>
       </section>
     </section>
+
+    <section id="job-dashboard">
+      <h2>Job Application Tracking Dashboard</h2>
+      <form id="job-form">
+        <label for="company-name">Company:</label>
+        <input type="text" id="company-name" placeholder="e.g., Google" required>
+
+        <label for="job-title">Job Title:</label>
+        <input type="text" id="job-title" placeholder="e.g., Software Engineer" required>
+
+        <label for="application-date">Date Applied:</label>
+        <input type="date" id="application-date" required>
+
+        <label for="application-status">Status:</label>
+        <select id="application-status">
+          <option value="Pending">Pending</option>
+          <option value="Interview Scheduled">Interview Scheduled</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Accepted">Accepted</option>
+        </select>
+
+        <button type="submit">Add Application</button>
+      </form>
+
+      <table id="job-table">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Job Title</th>
+            <th>Date Applied</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+    </section>
+    <section id="form-history">
+      <h2>Saved Forms</h2>
+      <table id="history-table">
+        <thead>
+          <tr>
+            <th>Form Summary</th>
+            <th>Date Saved</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <section id="data-transfer">
+      <h2>Data Transfer</h2>
+      <button id="export-data">Export Data</button>
+      <input type="file" id="import-file" style="display: none;">
+      <button id="import-data">Import Data</button>
+      <button id="send-email">Send Data via Email</button>
+    </section>
+    <section id="cover-letter-section">
+      <h2>Generate Cover Letter</h2>
+      <button id="create-coverletter">Create Cover Letter</button>
+      <div id="cover-letter-output">
+        <h3>Generated Cover Letter:</h3>
+        <p id="cover-letter-text">Your generated cover letter will appear here.</p>
+      </div>
+    </section>
+
   </main>
-  <section id="job-dashboard">
-    <h2>Job Application Tracking Dashboard</h2>
-    <form id="job-form">
-      <label for="company-name">Company:</label>
-      <input type="text" id="company-name" placeholder="e.g., Google" required>
 
-      <label for="job-title">Job Title:</label>
-      <input type="text" id="job-title" placeholder="e.g., Software Engineer" required>
-
-      <label for="application-date">Date Applied:</label>
-      <input type="date" id="application-date" required>
-
-      <label for="application-status">Status:</label>
-      <select id="application-status">
-        <option value="Pending">Pending</option>
-        <option value="Interview Scheduled">Interview Scheduled</option>
-        <option value="Rejected">Rejected</option>
-        <option value="Accepted">Accepted</option>
-      </select>
-
-      <button type="submit">Add Application</button>
-    </form>
-
-    <table id="job-table">
-      <thead>
-        <tr>
-          <th>Company</th>
-          <th>Job Title</th>
-          <th>Date Applied</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Dynamically populated -->
-      </tbody>
-    </table>
-  </section>
-  <section id="form-history">
-    <h2>Saved Forms</h2>
-    <table id="history-table">
-      <thead>
-        <tr>
-          <th>Form Summary</th>
-          <th>Date Saved</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-  <section id="data-transfer">
-    <h2>Data Transfer</h2>
-    <button id="export-data">Export Data</button>
-    <input type="file" id="import-file" style="display: none;">
-    <button id="import-data">Import Data</button>
-    <button id="send-email">Send Data via Email</button>
-  </section>
   <script src="app.js"></script>
 </body>
 
