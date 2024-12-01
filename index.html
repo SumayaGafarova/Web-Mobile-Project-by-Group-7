@@ -63,6 +63,45 @@
       </section>
     </section>
   </main>
+  <section id="job-dashboard">
+    <h2>Job Application Tracking Dashboard</h2>
+    <form id="job-form">
+      <label for="company-name">Company:</label>
+      <input type="text" id="company-name" placeholder="e.g., Google" required>
+
+      <label for="job-title">Job Title:</label>
+      <input type="text" id="job-title" placeholder="e.g., Software Engineer" required>
+
+      <label for="application-date">Date Applied:</label>
+      <input type="date" id="application-date" required>
+
+      <label for="application-status">Status:</label>
+      <select id="application-status">
+        <option value="Pending">Pending</option>
+        <option value="Interview Scheduled">Interview Scheduled</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Accepted">Accepted</option>
+      </select>
+
+      <button type="submit">Add Application</button>
+    </form>
+
+    <table id="job-table">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Job Title</th>
+          <th>Date Applied</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamically populated -->
+      </tbody>
+    </table>
+  </section>
+
   <script src="app.js"></script>
 </body>
 
