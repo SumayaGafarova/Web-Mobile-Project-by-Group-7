@@ -4,20 +4,31 @@ document.addEventListener('DOMContentLoaded', () => {
   let profiles = JSON.parse(localStorage.getItem('profiles')) || {};
   let activeProfile = localStorage.getItem('activeProfile') || 'Default';
 
-  // Ensure active profile exists and is an array
-  if (!profiles[activeProfile] || !Array.isArray(profiles[activeProfile])) {
-    profiles[activeProfile] = [];
-    localStorage.setItem('profiles', JSON.stringify(profiles));
-  }
+  // Helper function to ensure profile initialization
+  const initializeProfile = (profileName) => {
+    if (!profiles[profileName]) {
+      profiles[profileName] = { fields: [], mappings: {} };
+      localStorage.setItem('profiles', JSON.stringify(profiles));
+    }
+  };
+
+  // Initialize active profile
+  initializeProfile(activeProfile);
 
   // Get references to DOM elements
   const fieldsList = document.getElementById('fields-list');
   const fieldForm = document.getElementById('field-form');
-  let fields = profiles[activeProfile]; // Safe initialization
+  const mappingForm = document.getElementById('mapping-form');
+  const mappingList = document.getElementById('mapping-list');
+  let { fields = [], mappings = {} } = profiles[activeProfile]; // Destructure active profile
 
   // Render fields
   const renderFields = () => {
     fieldsList.innerHTML = '';
+    if (!Array.isArray(fields)) {
+      console.error('Fields is not an array:', fields);
+      fields = []; // Fallback to an empty array
+    }
     fields.forEach((field, index) => {
       const listItem = document.createElement('li');
       const fieldText = document.createElement('span');
@@ -29,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fields.splice(index, 1);
         saveFields();
         renderFields();
+        populateLinkedInFields();
       });
 
       listItem.appendChild(fieldText);
@@ -37,9 +49,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Save fields to the active profile
+  // Render mappings
+  const renderMappings = () => {
+    mappingList.innerHTML = '';
+    Object.keys(mappings).forEach((linkedInField) => {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `
+        <span>${linkedInField} → ${mappings[linkedInField]}</span>
+        <button onclick="removeMapping('${linkedInField}')">Remove</button>
+      `;
+      mappingList.appendChild(listItem);
+    });
+  };
+
+  // Save fields and mappings to the active profile
   const saveFields = () => {
-    profiles[activeProfile] = fields;
+    profiles[activeProfile] = { fields, mappings };
     localStorage.setItem('profiles', JSON.stringify(profiles));
   };
 
@@ -58,9 +83,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       saveFields();
       renderFields();
+      populateLinkedInFields();
       fieldForm.reset();
     }
   });
+
+  // Populate LinkedIn fields dropdown
+  const populateLinkedInFields = () => {
+    const linkedInFieldSelect = document.getElementById('custom-field');
+    linkedInFieldSelect.innerHTML = '';
+    fields.forEach((field) => {
+      const option = document.createElement('option');
+      option.value = field.name;
+      option.textContent = field.name;
+      linkedInFieldSelect.appendChild(option);
+    });
+  };
+
+  // Add a new mapping
+  mappingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const linkedInField = document.getElementById('custom-field').value.trim();
+    const formField = document.getElementById('form-field').value.trim();
+
+    if (linkedInField && formField) {
+      mappings[linkedInField] = formField;
+      saveFields();
+      renderMappings();
+      mappingForm.reset();
+    } else {
+      alert('Both LinkedIn Field and Form Field are required.');
+    }
+  });
+
+  // Remove a mapping
+  window.removeMapping = (linkedInField) => {
+    delete mappings[linkedInField];
+    saveFields();
+    renderMappings();
+  };
 
   // Populate the profile selector dropdown
   const updateProfileSelector = () => {
@@ -72,9 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (profileName === activeProfile) {
         option.selected = true;
       }
-      if (profileName === "Default") {
-        option.disabled = true;
-      }
       profileSelector.appendChild(option);
     });
   };
@@ -83,23 +141,19 @@ document.addEventListener('DOMContentLoaded', () => {
   profileSelector.addEventListener('change', (e) => {
     activeProfile = e.target.value;
     localStorage.setItem('activeProfile', activeProfile);
+    initializeProfile(activeProfile);
 
-    // Ensure the new profile exists and is an array
-    if (!profiles[activeProfile] || !Array.isArray(profiles[activeProfile])) {
-      profiles[activeProfile] = [];
-      localStorage.setItem('profiles', JSON.stringify(profiles));
-    }
-
-    fields = profiles[activeProfile];
+    ({ fields, mappings } = profiles[activeProfile]); // Update fields and mappings
     renderFields();
+    renderMappings();
+    populateLinkedInFields();
   });
 
   // Create a new profile
   document.getElementById('create-profile').addEventListener('click', () => {
     const newProfileName = prompt('Enter a name for the new profile:').trim();
     if (newProfileName && !profiles[newProfileName]) {
-      profiles[newProfileName] = [];
-      localStorage.setItem('profiles', JSON.stringify(profiles));
+      initializeProfile(newProfileName);
       updateProfileSelector();
       alert(`Profile "${newProfileName}" created successfully.`);
     } else if (profiles[newProfileName]) {
@@ -120,16 +174,14 @@ document.addEventListener('DOMContentLoaded', () => {
       activeProfile = Object.keys(profiles)[0];
       localStorage.setItem('profiles', JSON.stringify(profiles));
       localStorage.setItem('activeProfile', activeProfile);
-      fields = profiles[activeProfile];
+      ({ fields, mappings } = profiles[activeProfile]);
       updateProfileSelector();
       renderFields();
+      renderMappings();
+      populateLinkedInFields();
       alert('Profile deleted successfully.');
     }
   });
-
-  // Initialize
-  renderFields();
-  updateProfileSelector();
 
   // Extract LinkedIn Section
   document.getElementById('extract-data').addEventListener('click', async () => {
@@ -157,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
               });
               saveFields();
               renderFields();
+              populateLinkedInFields();
               alert("Data extracted successfully!");
             }
           }
@@ -186,4 +239,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     return profileData;
   }
+
+  // Initialize
+  renderFields();
+  renderMappings();
+  populateLinkedInFields();
+  updateProfileSelector();
 });

@@ -15,15 +15,17 @@
   <main>
     <section id="data-fields">
       <h2>Manage Your Data</h2>
+
+      <!-- Profile Section -->
       <section id="profile-section">
-        <h2>Profiles</h2>
+        <h3>Profiles</h3>
         <label for="profile-selector">Active Profile:</label>
         <select id="profile-selector"></select>
         <button id="create-profile">Create Profile</button>
         <button id="delete-profile">Delete Profile</button>
-        <button id="extract-data">Extract from LinkedIn</button>
       </section>
 
+      <!-- Add Fields Form -->
       <form id="field-form">
         <label for="field-name">Field Name:</label>
         <input type="text" id="field-name" placeholder="e.g., Portfolio Link" required>
@@ -31,12 +33,37 @@
         <input type="text" id="field-value" placeholder="e.g., https://myportfolio.com" required>
         <button type="submit" id="add-field">Add Field</button>
       </form>
+
+      <!-- Fields List -->
       <ul id="fields-list">
         <!-- Dynamically populated list -->
       </ul>
+
+      <!-- Mapping Section -->
+      <section id="field-mapping">
+        <h3>Form Field Mapping</h3>
+        <form id="mapping-form">
+          <label for="custom-field">custom Field:</label>
+          <select id="custom-field">
+            <!-- Dynamically populated -->
+          </select>
+          <label for="form-field">Form Field:</label>
+          <input type="text" id="form-field" placeholder="Enter form field name" required>
+          <button type="submit">Add Mapping</button>
+        </form>
+        <ul id="mapping-list">
+          <!-- Dynamically populated -->
+        </ul>
+      </section>
+
+      <!-- LinkedIn Extraction Section -->
+      <section id="linkedin">
+        <h3>Extract LinkedIn Data</h3>
+        <button id="extract-data">Extract from LinkedIn</button>
+      </section>
     </section>
   </main>
-  <script src="fields.js"></script>
+  <script src="app.js"></script>
 </body>
 
 </html>
