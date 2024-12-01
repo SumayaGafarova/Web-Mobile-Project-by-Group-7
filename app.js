@@ -386,6 +386,103 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  document.getElementById('save-for-later').addEventListener('click', () => {
+    const formElements = document.querySelectorAll('input, select, textarea');
+
+    const formData = {
+      timestamp: new Date().toISOString(),
+      fields: Array.from(formElements).map((element) => ({
+        name: element.name || element.id || element.placeholder || 'unnamed',
+        value: element.value.trim(),
+      })),
+    };
+
+    chrome.storage.local.get(['savedForms'], (result) => {
+      const savedForms = result.savedForms || [];
+      savedForms.push(formData);
+
+      chrome.storage.local.set({ savedForms }, () => {
+        alert('Form saved for future submission!');
+      });
+    });
+  });
+
+  const renderSavedForms = () => {
+    chrome.storage.local.get(['savedForms'], (result) => {
+      console.log(result)
+      const savedForms = result.savedForms || [];
+      const historyTableBody = document.querySelector('#history-table tbody');
+
+      historyTableBody.innerHTML = ''; // Clear existing rows
+
+      savedForms.forEach((form, index) => {
+        const row = document.createElement('tr');
+
+        // Display summary: the first few fields or timestamp
+        const summary = form.fields
+          .slice(0, 3) // Show the first three fields as a summary
+          .map((field) => `${field.name}: ${field.value}`)
+          .join(', ');
+
+        row.innerHTML = `
+                <td>${summary || 'Unnamed Form'}</td>
+                <td>${new Date(form.timestamp).toLocaleDateString()}</td>
+                <td>
+                    <button class="load-form" data-index="${index}">Load</button>
+                    <button class="delete-form" data-index="${index}">Delete</button>
+                </td>
+            `;
+
+        historyTableBody.appendChild(row);
+      });
+
+      // Add event listeners for actions
+      document.querySelectorAll('.load-form').forEach((button) => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.dataset.index;
+          loadSavedForm(index);
+        });
+      });
+
+      document.querySelectorAll('.delete-form').forEach((button) => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.dataset.index;
+          deleteSavedForm(index);
+        });
+      });
+    });
+  };
+
+  const loadSavedForm = (index) => {
+    chrome.storage.local.get(['savedForms'], (result) => {
+      const savedForms = result.savedForms || [];
+      const form = savedForms[index];
+
+      if (form) {
+        form.fields.forEach((field) => {
+          const element = document.querySelector(`[name="${field.name}"], [id="${field.name}"], [placeholder="${field.name}"]`);
+          if (element) {
+            element.value = field.value;
+          }
+        });
+
+        alert('Form loaded successfully!');
+      }
+    });
+  };
+
+  const deleteSavedForm = (index) => {
+    chrome.storage.local.get(['savedForms'], (result) => {
+      const savedForms = result.savedForms || [];
+      savedForms.splice(index, 1);
+
+      chrome.storage.local.set({ savedForms }, () => {
+        renderSavedForms();
+        alert('Form deleted successfully!');
+      });
+    });
+  };
+
   chrome.runtime.onMessage.addListener((request) => {
     if (request.action === 'updateDashboard') {
       renderJobDashboard();
@@ -399,4 +496,5 @@ document.addEventListener('DOMContentLoaded', () => {
   populateLinkedInFields();
   populatePageFields();
   renderJobDashboard();
+  renderSavedForms();
 });
