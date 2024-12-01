@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Populate LinkedIn fields dropdown
+  // Populate LinkedIn fields dropdown with custom fields
   const populateLinkedInFields = () => {
     const linkedInFieldSelect = document.getElementById('custom-field');
     linkedInFieldSelect.innerHTML = '';
@@ -119,7 +119,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Add a new mapping
+  const populatePageFields = () => {
+    const formFieldSelect = document.getElementById('form-field');
+
+    chrome.runtime.sendMessage({ action: 'fetchPageFields' }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError.message);
+        alert("Unable to fetch fields from the current page. Ensure the content script is running.");
+        return;
+      }
+
+      const pageFields = response?.pageFields || [];
+      formFieldSelect.innerHTML = '';
+
+      pageFields.forEach((fieldName) => {
+        const option = document.createElement('option');
+        option.value = fieldName;
+        option.textContent = fieldName;
+        formFieldSelect.appendChild(option);
+      });
+    });
+  };
+
+
+  // Add a new mapping with updated functionality
   mappingForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const linkedInField = document.getElementById('custom-field').value.trim();
@@ -253,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return profileData;
   }
 
-
   // Autofill forms
   document.getElementById('autofill-forms').addEventListener('click', () => {
     chrome.storage.local.get(['profiles', 'activeProfile'], (result) => {
@@ -272,10 +294,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-
   // Initialize
   updateProfileSelector();
   renderFields();
   renderMappings();
   populateLinkedInFields();
+  populatePageFields();
 });
