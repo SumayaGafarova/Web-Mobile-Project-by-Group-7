@@ -52,4 +52,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true; // Indicate async response
   }
+  if (request.action === 'trackJobApplication') {
+    const newApplication = request.data;
+
+    chrome.storage.local.get(['jobApplications'], (result) => {
+      const jobApplications = result.jobApplications || [];
+      jobApplications.push(newApplication);
+
+      chrome.storage.local.set({ jobApplications }, () => {
+        console.log('Job application added:', newApplication);
+
+        // Notify index.html about the update
+        chrome.runtime.sendMessage({
+          action: 'updateDashboard',
+          jobApplications,
+        });
+      });
+    });
+  }
 });

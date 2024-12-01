@@ -294,10 +294,109 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const deleteJobApplication = (index) => {
+    chrome.storage.local.get(['jobApplications'], (result) => {
+      const jobApplications = result.jobApplications || [];
+
+      // Remove the job application at the specified index
+      jobApplications.splice(index, 1);
+
+      // Save and re-render after deletion
+      chrome.storage.local.set({ jobApplications }, () => {
+        renderJobDashboard();
+      });
+    });
+  };
+
+  const editJobApplication = (index) => {
+    chrome.storage.local.get(['jobApplications'], (result) => {
+      const jobApplications = result.jobApplications || [];
+      const application = jobApplications[index];
+
+      // Populate the form with existing values
+      document.getElementById('company-name').value = application.company;
+      document.getElementById('job-title').value = application.title;
+      document.getElementById('application-date').value = application.date;
+      document.getElementById('application-status').value = application.status;
+
+      // Listen for form submission
+      const jobForm = document.getElementById('job-form');
+      jobForm.onsubmit = (e) => {
+        e.preventDefault();
+
+        // Get updated values
+        const updatedApplication = {
+          company: document.getElementById('company-name').value.trim(),
+          title: document.getElementById('job-title').value.trim(),
+          date: document.getElementById('application-date').value,
+          status: document.getElementById('application-status').value,
+        };
+
+        // Replace the old application with the updated one
+        jobApplications[index] = updatedApplication;
+
+        // Save to storage and re-render the dashboard
+        chrome.storage.local.set({ jobApplications }, () => {
+          renderJobDashboard();
+          jobForm.reset();
+          jobForm.onsubmit = null; // Reset the form's onsubmit handler
+        });
+      };
+    });
+  };
+
+  const renderJobDashboard = () => {
+    chrome.storage.local.get(['jobApplications'], (result) => {
+      const jobApplications = result.jobApplications || [];
+      const jobTableBody = document.querySelector('#job-table tbody');
+
+      jobTableBody.innerHTML = ''; // Clear existing rows
+
+      jobApplications.forEach((application, index) => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+                <td>${application.company}</td>
+                <td>${application.title}</td>
+                <td>${new Date(application.date).toLocaleDateString()}</td>
+                <td>${application.status}</td>
+                <td>
+                    <button class="edit-job" data-index="${index}">Edit</button>
+                    <button class="delete-job" data-index="${index}">Delete</button>
+                </td>
+            `;
+
+        jobTableBody.appendChild(row);
+      });
+
+      // Add event listeners for Edit and Delete actions
+      document.querySelectorAll('.edit-job').forEach((button) => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.dataset.index;
+          editJobApplication(index);
+        });
+      });
+
+      document.querySelectorAll('.delete-job').forEach((button) => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.dataset.index;
+          deleteJobApplication(index);
+        });
+      });
+    });
+  };
+
+  chrome.runtime.onMessage.addListener((request) => {
+    if (request.action === 'updateDashboard') {
+      renderJobDashboard();
+    }
+  });
+
   // Initialize
   updateProfileSelector();
   renderFields();
   renderMappings();
   populateLinkedInFields();
   populatePageFields();
+  renderJobDashboard();
 });

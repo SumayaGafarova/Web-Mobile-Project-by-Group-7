@@ -42,3 +42,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ pageFields }); // Send response back
     }
 });
+
+document.addEventListener('submit', (event) => {
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const applicationData = {
+        company: formData.get('company') || '',
+        title: formData.get('title') || '',
+        date: new Date().toISOString(), // Add current date
+        status: 'Submitted', 
+    };
+
+    // Send data to background.js
+    chrome.runtime.sendMessage({
+        action: 'trackJobApplication',
+        data: applicationData,
+    });
+});
