@@ -1,172 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile Manager</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="reset.css">
-    <link rel="icon" type="image/x-icon" href="sources/favicon.ico">
-    <script src="app.js"></script>
-  </head>
-  <body>
-    <div class="header">
-      <h1>Welcome to Profile Manager</h1>
-    </div>
-    <div class="container">
-      <!-- Add Profile Section -->
-      <div class="input-section">
-        <h2>Create Profiles</h2>
-        <input
-          type="text"
-          id="profileNameInput"
-          placeholder="Enter Profile Name"
-        />
-        <button id="addProfileButton">Add Profile</button>
-      </div>
 
-      <!-- Profiles List -->
-      <div id="profilesContainer">
-        <h2>Profiles</h2>
-        <div id="profileButtons"></div>
-      </div>
-      <hr />
-      <!-- <h1>Profile Manager</h1> -->
-      <h2>Base Profile</h2>
-      <!-- Base Profile Section -->
-      <div id="baseProfileSection">
-        <form id="baseProfileForm">
-          <div id="fullname">
-            <label for="baseName">Name:</label>
-            <input type="text" id="baseName" placeholder="Enter Name" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customizable Data Fields</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
 
-            <label for="baseSurname">Surname:</label>
-            <input type="text" id="baseSurname" placeholder="Enter Surname" />
-          </div>
-        
-          <fieldset>
-            <legend>Gender: </legend>
-              <label><input name="sex" type="radio" checked="checked"/>Male</label>
-              <label><input name="sex" type="radio" />Female</label>
-              <label><input name="sex" type="radio" />Other</label>
-          </fieldset>
+<body>
+  <header>
+    <h1>Customizable Data Fields</h1>
+  </header>
+  <main>
+    <section id="data-fields">
+      <h2>Manage Your Data</h2>
+      <form id="field-form">
+        <label for="field-name">Field Name:</label>
+        <input type="text" id="field-name" placeholder="e.g., Portfolio Link" required>
+        <label for="field-value">Field Value:</label>
+        <input type="text" id="field-value" placeholder="e.g., https://myportfolio.com" required>
+        <button type="submit" id="add-field">Add Field</button>
+      </form>
+      <ul id="fields-list">
+        <!-- Dynamically populated list -->
+      </ul>
+    </section>
+    <section id="linkedin">
+      <h2>Extract LinkedIn Data</h2>
+      <button id="extract-data">Extract from LinkedIn</button>
+    </section>
+  </main>
+  <script src="fields.js"></script>
+</body>
 
-          <label for="baseAge">Age:</label>
-          <input type="number" id="baseAge" placeholder="Enter Age" />
-
-          <label for="baseBirthDate">Birth Date:</label>
-          <input type="date" id="baseBirthDate" />
-          
-          <label for="baseEducation">Education:</label>
-          <select id="baseEducation">
-            <option disabled selected></option>
-            <option>Primary school only</option>
-            <option>Some high school, no diploma</option>
-            <option>High school diploma</option>
-            <option>Vocational school</option>
-            <option>University degree</option>
-            <option>Some graduate-level courses</option>
-            <option>Master's degree</option>
-            <option>Some doctoral-level courses</option>
-            <option>Doctorate</option>
-          </select> 
-
-          <label for="baseExperience">Experience:</label>
-          <textarea id="baseExperience" placeholder="Enter Experience" rows="5"></textarea>
-    
-          <label for="baseSkills">Skills:</label>
-          <textarea id="baseSkills" placeholder="Enter Skills" rows="5"></textarea>
-
-          <label for="baseCertificates">Certificates (Upload Files):</label>
-          <input type="file" id="baseCertificates" multiple />
-
-          <div id="button-container">
-            <button type="submit">Save Base Profile</button>
-            <button type="reset">Reset</button>
-          </div>
-          
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
-      <div class="modal-content">
-        <span id="closeModal" class="close">&times;</span>
-        <h3 id="modalTitle">Profile Form</h3>
-        <form id="profileForm">
-          <label for="profileName">Name:</label>
-          <input type="text" id="profileName" />
-
-          <label for="profileSurname">Surname:</label>
-          <input type="text" id="profileSurname" />
-          <br />
-          <br />
-
-          <label for="profileGender">Gender:</label>
-          <select id="profileGender">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-
-          <label for="profileAge">Age:</label>
-          <input type="number" id="profileAge" />
-
-          <label for="profileBirthDate">Birth Date:</label>
-          <input type="date" id="profileBirthDate" />
-          <br />
-          <br />
-
-          <label for="profileEducation">Education:</label>
-          <input type="text" id="profileEducation" />
-
-          <label for="profileExperience">Experience:</label>
-          <input type="text" id="profileExperience" />
-          <br />
-          <br />
-
-          <label for="profileSkills">Skills:</label>
-          <input type="text" id="profileSkills" />
-
-          <label for="profileCertificates">Certificates:</label>
-          <input type="file" id="profileCertificatesInput" multiple />
-
-          <button type="submit">Save</button>
-        </form>
-
-        <!--  ------------------------------------ -->
-
-        <div id="educationContainer">
-          <label for="baseEducation">Education:</label>
-          <input
-            type="text"
-            id="baseEducation"
-            class="education-input"
-            placeholder="Enter Education"
-          />
-        </div>
-
-        <div id="experienceContainer">
-          <label for="baseExperience">Experience:</label>
-          <input
-            type="text"
-            id="baseExperience"
-            class="experience-input"
-            placeholder="Enter Experience"
-          />
-        </div>
-
-        <div id="skillsContainer">
-          <label for="baseSkills">Skills:</label>
-          <input
-            type="text"
-            id="baseSkills"
-            class="skills-input"
-            placeholder="Enter Skills"
-          />
-        </div>
-      </div>
-    </div>
-  </body>
 </html>

@@ -1,8 +1,17 @@
 {
-  "name": "Profile Manager Extension",
-  "description": "Extension to autofill job applications (forms)",
-  "version": "1.0",
   "manifest_version": 3,
+  "name": "Profile Manager Extension",
+  "version": "1.0",
+  "description": "Extension to autofill job applications (forms)",
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "*://*/*"
+  ],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
   "action": {
     "default_popup": "index.html",
     "default_icon": "sources/footer.jpg"
