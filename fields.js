@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (profileName === activeProfile) {
         option.selected = true;
       }
+      if (profileName === "Default") {
+        option.disabled = true;
+      }
       profileSelector.appendChild(option);
     });
   };
